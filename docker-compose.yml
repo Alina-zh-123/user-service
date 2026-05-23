@@ -27,8 +27,8 @@ services:
       - redis
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8080:8080"
 

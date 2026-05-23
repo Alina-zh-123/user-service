@@ -8,3 +8,6 @@ spring:
     redis:
       host: redis
       port: 6379
+
+  liquibase:
+    change-log: "classpath:db/changelog/master.xml"
