@@ -89,9 +89,9 @@ public class UserServiceTest {
         UserDto userDto = userService.createUser(userDto1);
         assertEquals(userDto, userDto1);
 
-        verify(userMapper.dtoToUser(userDto1));
-        verify(userMapper.userToUserDto(user1));
-        verify(userRepository.save(user1));
+        verify(userMapper).dtoToUser(userDto1);
+        verify(userMapper).userToUserDto(user1);
+        verify(userRepository).save(user1);
     }
 
     @Test
@@ -102,8 +102,8 @@ public class UserServiceTest {
         UserDto userDto = userService.getUserById(1L);
         assertEquals(userDto1, userDto);
 
-        verify(userRepository.findById(1L));
-        verify(userMapper.userToUserDto(user1));
+        verify(userRepository).findById(1L);
+        verify(userMapper).userToUserDto(user1);
     }
 
     @Test
@@ -113,9 +113,9 @@ public class UserServiceTest {
         Exception exception = assertThrows(UserException.class, () -> {
             userService.getUserById(1234L);
         });
-        assertEquals("User is not found", exception.getMessage());
+        assertEquals("User is not found!", exception.getMessage());
 
-        verify(userRepository.findById(1234L));
+        verify(userRepository).findById(1234L);
     }
 
     @Test
@@ -147,14 +147,14 @@ public class UserServiceTest {
     void updateUser_shouldUpdateUser() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         when(userRepository.save(user1)).thenReturn(user1);
-        when(userMapper.userToUserDto(user1)).thenReturn(userDto1);
+        when(userMapper.userToUserDto(user1)).thenReturn(userDto2);
 
         UserDto userDto = userService.updateUser(1L, "Marina", "Aximova", "ytrewq@gmail.com");
         assertEquals(userDto2, userDto);
 
-        verify(userRepository.findById(1L));
-        verify(userRepository.save(user1));
-        verify(userMapper.userToUserDto(user1));
+        verify(userRepository).findById(1L);
+        verify(userRepository).save(user1);
+        verify(userMapper).userToUserDto(user1);
     }
 
     @Test
@@ -165,9 +165,8 @@ public class UserServiceTest {
         userService.activateUser(2L, true);
         assertTrue(user2.isActive());
 
-        verify(userRepository.findById(2L));
-        verify(userRepository.save(user2));
-
+        verify(userRepository).findById(2L);
+        verify(userRepository).save(user2);
     }
 
     @Test
@@ -178,7 +177,7 @@ public class UserServiceTest {
         userService.activateUser(1L, false);
         assertFalse(user1.isActive());
 
-        verify(userRepository.findById(1L));
-        verify(userRepository.save(user1));
+        verify(userRepository).findById(1L);
+        verify(userRepository).save(user1);
     }
 }
