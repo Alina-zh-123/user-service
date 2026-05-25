@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/user_service_db
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/user_service_db}
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
@@ -8,6 +8,7 @@ spring:
     redis:
       host: redis
       port: 6379
+
 
   liquibase:
     change-log: "classpath:db/changelog/master.xml"

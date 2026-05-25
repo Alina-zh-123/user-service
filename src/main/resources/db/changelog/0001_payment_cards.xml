@@ -9,7 +9,7 @@
             <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false" />
             </column>
-            <column name="author_id" type="bigint">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false" foreignKeyName="fk_payment_cards_user" references="users(id)" />
             </column>
             <column name="number" type="varchar(16)">
@@ -32,8 +32,8 @@
             </column>
         </createTable>
 
-        <createIndex tableName="payment_cards" indexName="payment_cards_author_id_idx">
-            <column name="author_id" />
+        <createIndex tableName="payment_cards" indexName="payment_cards_user_id_idx">
+            <column name="user_id" />
         </createIndex>
     </changeSet>
 </databaseChangeLog>
