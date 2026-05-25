@@ -3,6 +3,7 @@ package com.innowise.userservice.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @Setter
 @Getter
 public class UserDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private Long id;

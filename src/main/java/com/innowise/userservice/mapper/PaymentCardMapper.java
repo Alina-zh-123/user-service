@@ -6,6 +6,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface PaymentCardMapper {
-    public PaymentCard dtoToPaymentCard(PaymentCardDto paymentCardDto);
-    public PaymentCardDto paymentCardToDto(PaymentCard paymentCard);
+    PaymentCard dtoToPaymentCard(PaymentCardDto paymentCardDto);
+    PaymentCardDto paymentCardToDto(PaymentCard paymentCard);
 }

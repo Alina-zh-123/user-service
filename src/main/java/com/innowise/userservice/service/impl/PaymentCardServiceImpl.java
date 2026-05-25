@@ -1,7 +1,6 @@
 package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.dto.PaymentCardDto;
-import com.innowise.userservice.dto.UserDto;
 import com.innowise.userservice.exception.PaymentCardException;
 import com.innowise.userservice.exception.UserException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
@@ -11,14 +10,12 @@ import com.innowise.userservice.repository.PaymentCardRepository;
 import com.innowise.userservice.repository.UserRepository;
 import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.specification.PaymentCardSpecification;
-import com.innowise.userservice.specification.UserSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

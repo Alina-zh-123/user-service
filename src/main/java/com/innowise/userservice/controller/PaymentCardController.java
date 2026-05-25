@@ -2,7 +2,6 @@ package com.innowise.userservice.controller;
 
 import com.innowise.userservice.dto.OnActivate;
 import com.innowise.userservice.dto.PaymentCardDto;
-import com.innowise.userservice.dto.UserDto;
 import com.innowise.userservice.service.PaymentCardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
