@@ -1,6 +1,7 @@
 package com.innowise.userservice.unit;
 
 import com.innowise.userservice.dto.PaymentCardDto;
+import com.innowise.userservice.dto.UserDto;
 import com.innowise.userservice.exception.PaymentCardException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
 import com.innowise.userservice.entity.PaymentCard;
@@ -12,9 +13,17 @@ import com.innowise.userservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,8 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentCardServiceTest {
@@ -34,6 +42,10 @@ public class PaymentCardServiceTest {
     private PaymentCardMapper paymentCardMapper;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private CacheManager cacheManager;
+    @Mock
+    private Cache userCache;
 
     private User user1;
     private User user2;
@@ -148,7 +160,8 @@ public class PaymentCardServiceTest {
 
     @Test
     void getAllPaymentCardsByUserId_shouldReturnAllPaymentCards() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(paymentCardRepository.findByUserId(1L))
+                .thenReturn(Arrays.asList(paymentCard1, paymentCard2));
         when(paymentCardMapper.paymentCardToDto(paymentCard1)).thenReturn(paymentCardDto1);
         when(paymentCardMapper.paymentCardToDto(paymentCard2)).thenReturn(paymentCardDto2);
 
@@ -157,13 +170,40 @@ public class PaymentCardServiceTest {
         assertEquals(paymentCardDto1, paymentCardDtos.get(0));
         assertEquals(paymentCardDto2, paymentCardDtos.get(1));
 
-        verify(userRepository).findById(1L);
+        verify(paymentCardRepository).findByUserId(1L);
         verify(paymentCardMapper).paymentCardToDto(paymentCard1);
         verify(paymentCardMapper).paymentCardToDto(paymentCard2);
     }
 
     @Test
+    void getAllPaymentCardsWithFilter_ShouldReturnPagePaymentCardDto() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<PaymentCard> paymentCards = List.of(paymentCard1);
+        Page<PaymentCard> pagePaymentCards = new PageImpl<>(paymentCards, pageable, paymentCards.size());
+
+        when(paymentCardRepository.findAll(
+                ArgumentMatchers.<Specification<PaymentCard>>any(),
+                eq(pageable)
+        )).thenReturn(pagePaymentCards);
+
+        when(paymentCardMapper.paymentCardToDto(paymentCard1)).thenReturn(paymentCardDto1);
+
+        Page<PaymentCardDto> pagePaymentCardDto = paymentCardService.getAllPaymentCardsWithFilter("Arina", "Maximova", pageable);
+
+        assertEquals(1, pagePaymentCards.getTotalPages());
+        assertEquals(1, pagePaymentCards.getTotalElements());
+
+        verify(paymentCardRepository).findAll(
+                ArgumentMatchers.<Specification<PaymentCard>>any(),
+                eq(pageable)
+        );
+    }
+
+    @Test
     void updatePaymentCard_shouldUpdatePaymentCard() {
+        when(cacheManager.getCache("userCache")).thenReturn(userCache);
+
         when(paymentCardRepository.findById(1L)).thenReturn(Optional.of(paymentCard1));
         when(paymentCardRepository.save(paymentCard1)).thenReturn(paymentCard1);
         when(paymentCardMapper.paymentCardToDto(paymentCard1)).thenReturn(paymentCardDto3);
@@ -178,29 +218,42 @@ public class PaymentCardServiceTest {
         verify(paymentCardRepository).findById(1L);
         verify(paymentCardRepository).save(paymentCard1);
         verify(paymentCardMapper).paymentCardToDto(paymentCard1);
-    }
-
-    @Test
-    void activatePaymentCard() {
-        when(paymentCardRepository.findById(2L)).thenReturn(Optional.of(paymentCard2));
-        when(paymentCardRepository.save(paymentCard2)).thenReturn(paymentCard2);
-
-        paymentCardService.activatePaymentCard(2L, true);
-        assertTrue(paymentCard2.isActive());
-
-        verify(paymentCardRepository).findById(2L);
-        verify(paymentCardRepository).save(paymentCard2);
+        verify(cacheManager).getCache("userCache");
     }
 
     @Test
     void deactivatePaymentCard() {
+        when(cacheManager.getCache("userCache")).thenReturn(userCache);
+
         when(paymentCardRepository.findById(1L)).thenReturn(Optional.of(paymentCard1));
-        when(paymentCardRepository.save(paymentCard1)).thenReturn(paymentCard1);
+        doAnswer(invocation -> {
+            paymentCard1.setActive(false);
+            return null;
+        }).when(paymentCardRepository).activatePaymentCardById(1L, false);
 
         paymentCardService.activatePaymentCard(1L, false);
         assertFalse(paymentCard1.isActive());
 
         verify(paymentCardRepository).findById(1L);
-        verify(paymentCardRepository).save(paymentCard1);
+        verify(paymentCardRepository).activatePaymentCardById(1L, false);
+        verify(cacheManager).getCache("userCache");
+    }
+
+    @Test
+    void activatePaymentCard() {
+        when(cacheManager.getCache("userCache")).thenReturn(userCache);
+
+        when(paymentCardRepository.findById(2L)).thenReturn(Optional.of(paymentCard2));
+        doAnswer(invocation -> {
+            paymentCard2.setActive(true);
+            return null;
+        }).when(paymentCardRepository).activatePaymentCardById(2L, true);
+
+        paymentCardService.activatePaymentCard(2L, true);
+        assertTrue(paymentCard2.isActive());
+
+        verify(paymentCardRepository).findById(2L);
+        verify(paymentCardRepository).activatePaymentCardById(2L, true);
+        verify(cacheManager).getCache("userCache");
     }
 }

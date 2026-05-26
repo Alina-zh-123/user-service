@@ -23,8 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -164,25 +163,27 @@ public class UserServiceTest {
 
     @Test
     void activateUser() {
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user2));
-        when(userRepository.save(user2)).thenReturn(user2);
+        doAnswer(invocation -> {
+            user2.setActive(true);
+            return null;
+        }).when(userRepository).activateUserById(2L, true);
 
         userService.activateUser(2L, true);
         assertTrue(user2.isActive());
 
-        verify(userRepository).findById(2L);
-        verify(userRepository).save(user2);
+        verify(userRepository).activateUserById(2L, true);
     }
 
     @Test
     void deactivateUser() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
-        when(userRepository.save(user1)).thenReturn(user1);
+        doAnswer(invocation -> {
+            user1.setActive(false);
+            return null;
+        }).when(userRepository).activateUserById(1L, false);
 
         userService.activateUser(1L, false);
         assertFalse(user1.isActive());
 
-        verify(userRepository).findById(1L);
-        verify(userRepository).save(user1);
+        verify(userRepository).activateUserById(1L, false);
     }
 }

@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    @CachePut(value = "userCache", key = "#result.id")
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.dtoToUser(userDto);
         User res = userRepository.save(user);
@@ -34,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "userCache", key = "#id")
     public UserDto getUserById(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithCards(id)
                 .orElseThrow(() -> new UserException("User is not found!"));
         return userMapper.userToUserDto(user);
     }
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @CachePut(value = "userCache", key = "#id")
     public UserDto updateUser(Long id, UserDto userDto) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdWithCards(id)
                 .orElseThrow(() -> new UserException("User is not found!"));
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());

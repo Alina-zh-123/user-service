@@ -32,7 +32,6 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     private final CacheManager cacheManager;
 
     @Override
-    @CachePut(value = "paymentCardCache", key = "#result.id")
     @CacheEvict(value = "userCache", key = "#userId")
     public PaymentCardDto createPaymentCard(Long userId, PaymentCardDto paymentCardDto) {
         User user = userRepository.findById(userId)

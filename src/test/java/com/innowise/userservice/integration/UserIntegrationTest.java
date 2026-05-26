@@ -56,7 +56,7 @@ public class UserIntegrationTest {
     }
 
     @BeforeEach
-    public void setup(){
+    void setup(){
         userDto = new UserDto();
         userDto.setId(1L);
         userDto.setName("Arina");
@@ -68,7 +68,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    public void getUserById_shouldReturnUser() throws Exception {
+    void getUserById_shouldReturnUser() throws Exception {
         String responseBody = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
@@ -89,7 +89,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    void activateUser_shouldDectivateUser() throws Exception {
+    void activateUser_shouldDeactivateUser() throws Exception {
         mockMvc.perform(patch("/users/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"activate\": false}"))
