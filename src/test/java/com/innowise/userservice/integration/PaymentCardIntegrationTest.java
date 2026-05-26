@@ -1,6 +1,5 @@
 package com.innowise.userservice.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.userservice.dto.PaymentCardDto;
 import com.innowise.userservice.entity.PaymentCard;

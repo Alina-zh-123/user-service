@@ -1,7 +1,6 @@
 package com.innowise.userservice.unit;
 
 import com.innowise.userservice.dto.PaymentCardDto;
-import com.innowise.userservice.dto.UserDto;
 import com.innowise.userservice.exception.PaymentCardException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
 import com.innowise.userservice.entity.PaymentCard;
