@@ -60,6 +60,13 @@ jobs:
 
       - name: Build & Test
         run: mvn -B clean verify
+        env:
+          SPRING_LIQUIBASE_CHANGE_LOG: classpath:/db.changelog/master.xml
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_service_db
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+          SPRING_DATA_REDIS_HOST: localhost
+          SPRING_DATA_REDIS_PORT: 6379
 
       - name: SonarQube Scan
         env:
