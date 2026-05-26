@@ -95,26 +95,26 @@ public class UserServiceTest {
 
     @Test
     void getUserById_shouldReturnUser() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.findByIdWithCards(1L)).thenReturn(Optional.of(user1));
         when(userMapper.userToUserDto(user1)).thenReturn(userDto1);
 
         UserDto userDto = userService.getUserById(1L);
         assertEquals(userDto1, userDto);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findByIdWithCards(1L);
         verify(userMapper).userToUserDto(user1);
     }
 
     @Test
     void getUserById_shouldThrowUserException() {
-        when(userRepository.findById(1234L)).thenReturn(Optional.empty());
+        when(userRepository.findByIdWithCards(1234L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(UserException.class, () -> {
             userService.getUserById(1234L);
         });
         assertEquals("User is not found!", exception.getMessage());
 
-        verify(userRepository).findById(1234L);
+        verify(userRepository).findByIdWithCards(1234L);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class UserServiceTest {
 
     @Test
     void updateUser_shouldUpdateUser() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.findByIdWithCards(1L)).thenReturn(Optional.of(user1));
         when(userRepository.save(user1)).thenReturn(user1);
         when(userMapper.userToUserDto(user1)).thenReturn(userDto2);
 
@@ -156,7 +156,7 @@ public class UserServiceTest {
         UserDto userDto = userService.updateUser(1L, newUserDto);
         assertEquals(userDto2, userDto);
 
-        verify(userRepository).findById(1L);
+        verify(userRepository).findByIdWithCards(1L);
         verify(userRepository).save(user1);
         verify(userMapper).userToUserDto(user1);
     }
