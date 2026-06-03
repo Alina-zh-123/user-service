@@ -1,0 +1,24 @@
+logs/
+*.log
+*.log.*
+
+# Env
+.env
+.env.*
+!.env.example
+
+
+.idea/
+.idea
+.mvn
+
+*.properties
+
+.gitignore
+.gitattributes
+
+target/
+
+HELP.md
+mvnw.cmd
+mvnw
