@@ -7,6 +7,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,8 +17,7 @@ import java.util.List;
 public class UserDto implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private Long id;
+    private UUID uuid;
 
     @NotBlank(message = "Name cannot be blank")
     @Size(max = 255, message = "Name should be up to 255 characters")
