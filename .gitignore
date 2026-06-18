@@ -14,9 +14,6 @@ logs/
 
 *.properties
 
-.gitignore
-.gitattributes
-
 target/
 
 HELP.md
